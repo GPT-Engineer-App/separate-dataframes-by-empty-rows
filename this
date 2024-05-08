@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+
+# Example DataFrame
+data = {
+    'Column1': [1, 2, 3, np.nan, np.nan, 4, 5, 6, np.nan, 7, 8, 9],
+    'Column2': ['A', 'B', 'C', np.nan, np.nan, 'D', 'E', 'F', np.nan, 'G', 'H', 'I']
+}
+df = pd.DataFrame(data)
+
+# Function to split the DataFrame based on empty rows
+def split_dataframe(df):
+    # Identify the indices of the empty rows
+    empty_rows = df.index[df.isnull().all(1)]
+    
+    # Add the start and end indices of the DataFrame
+    indices = [0] + list(empty_rows + 1) + [len(df)]
+    
+    # Create a list of DataFrames
+    dataframes = []
+    for start, end in zip(indices[:-1], indices[1:]):
+        if start != end:  # This check prevents creating empty DataFrames
+            dataframes.append(df.iloc[start:end].dropna(how='all'))
+    
+    return dataframes
+
+# Splitting the DataFrame
+dfs = split_dataframe(df)
+
+# Assigning to individual variables
+df1, df2, df3 = dfs  # This will work if you are sure about the number of splits
+
+# Print the DataFrames
+print("DataFrame 1:")
+print(df1)
+print("\nDataFrame 2:")
+print(df2)
+print("\nDataFrame 3:")
+print(df3)
